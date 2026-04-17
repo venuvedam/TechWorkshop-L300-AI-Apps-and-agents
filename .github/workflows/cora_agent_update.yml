@@ -25,6 +25,16 @@ jobs:
           FOUNDRY_ENDPOINT: ${{ secrets.FOUNDRY_ENDPOINT }}
           GPT_DEPLOYMENT: ${{ secrets.GPT_DEPLOYMENT }}
         run: |
+          # Validate required secrets
+          if [[ -z "$GPT_DEPLOYMENT" ]]; then
+            echo "Error: GPT_DEPLOYMENT secret is not configured in this repository."
+            exit 1
+          fi
+          if [[ -z "$FOUNDRY_ENDPOINT" ]]; then
+            echo "Error: FOUNDRY_ENDPOINT secret is not configured in this repository."
+            exit 1
+          fi
+
           # Read the prompt file and escape it for JSON
           INSTRUCTIONS=$(python3 -c "
           import json
