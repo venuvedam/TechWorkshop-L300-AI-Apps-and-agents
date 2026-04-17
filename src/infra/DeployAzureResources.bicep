@@ -36,7 +36,7 @@ var tags = {
 
 // Ensure the current resource group has the required tag via a subscription-scoped module
 module updateRgTags 'updateRgTags.bicep' = {
-  name: 'updateRgTags'
+  name: 'updateRgTags-${uniqueString(resourceGroup().id)}'
   scope: subscription()
   params: {
     rgName: resourceGroup().name
@@ -195,6 +195,12 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2024-03-01' = {
         sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
       }
     }
+    workloadProfiles: [
+      {
+        name: 'Consumption'
+        workloadProfileType: 'Consumption'
+      }
+    ]
   }
   tags: tags
 }
@@ -222,6 +228,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
   }
   properties: {
     managedEnvironmentId: containerAppEnv.id
+    workloadProfileName: 'Consumption'
     configuration: {
       ingress: {
         external: true
